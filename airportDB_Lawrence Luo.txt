@@ -1,0 +1,157 @@
+/*Lawrence Luo, 20106509*/
+
+drop database airlineDB;
+create database airlineDB;
+
+CREATE TABLE Airline
+(
+    airlineCode varchar(255) NOT NULL PRIMARY KEY,
+    name varchar(255)
+);
+
+CREATE TABLE Airport
+(
+    airportCode varchar(255) NOT NULL PRIMARY KEY,
+    name varchar(255),
+    city varchar(255),
+    province varchar(255)
+);
+
+CREATE TABLE Airplane_type
+(
+    type varchar(255) NOT NULL PRIMARY KEY,
+    seats int,
+    manufacturer varchar(255)
+);
+
+CREATE TABLE Airplane
+(
+    planeID varchar(255) NOT NULL PRIMARY KEY,
+    year int,
+    type varchar(255),
+    airlineCode varchar(255),
+    FOREIGN KEY (type) REFERENCES Airplane_type(type) ON DELETE CASCADE,
+    FOREIGN KEY (airlineCode) REFERENCES Airline(airlineCode) ON DELETE CASCADE
+);
+
+CREATE TABLE Flight
+(
+    flightNumber varchar(255) NOT NULL PRIMARY KEY,
+    airlineCode varchar(255),
+    threeDigitNumber varchar(3),
+    planeID varchar(255),
+    FOREIGN KEY (airlineCode) REFERENCES Airline(airlineCode) ON DELETE CASCADE,
+    FOREIGN KEY (planeID) REFERENCES Airplane(planeID) ON DELETE CASCADE
+);
+
+CREATE TABLE Flight_day
+(
+    flightNumber varchar(255) NOT NULL,
+    flightDay varchar(255),
+    PRIMARY KEY (flightNumber, flightDay),
+    FOREIGN KEY (flightNumber) REFERENCES Flight(flightNumber) ON DELETE CASCADE
+);
+
+CREATE TABLE Arrives
+(
+    flightNumber varchar(255) NOT NULL,
+    airportCode varchar(255) NOT NULL,
+    scheduleArrive int,
+    actualArrive int,
+    PRIMARY KEY (flightNumber, airportCode),
+    FOREIGN KEY (airportCode) REFERENCES Airport(airportCode) ON DELETE CASCADE,
+    FOREIGN KEY (flightNumber) REFERENCES Flight(flightNumber) ON DELETE CASCADE
+);
+
+CREATE TABLE Departs
+(
+    flightNumber varchar(255) NOT NULL,
+    airportCode varchar(255) NOT NULL,
+    scheduleDepart int,
+    actualDepart int,
+    PRIMARY KEY (flightNumber, airportCode),
+    FOREIGN KEY (airportCode) REFERENCES Airport(airportCode) ON DELETE CASCADE,
+    FOREIGN KEY (flightNumber) REFERENCES Flight(flightNumber) ON DELETE CASCADE
+);
+
+
+CREATE TABLE Supports
+(
+    airportCode varchar(255) NOT NULL,
+    type varchar(255) NOT NULL,
+    PRIMARY KEY (airportCode, type),
+    FOREIGN KEY (airportCode) REFERENCES Airport(airportCode) ON DELETE CASCADE,
+    FOREIGN KEY (type) REFERENCES Airplane_type(type) ON DELETE CASCADE
+);
+
+
+
+
+
+INSERT INTO Airline values /*(Code, name)*/
+('AC', 'Air Canada'),
+('AF', 'Air France'),
+('CA', 'Air China');
+
+INSERT INTO Airplane_type values /*(type, seats, manufacturer)*/
+('F-22 Raptor', 1, 'Lockheed Martin'),
+('Su-34 Fullback', 2, 'Sukhoi'),
+('A-10 Warthog', 1, 'Fairchild Republic'),
+('AC-130 Gunship', 92, 'Lockheed Martin'),
+('787 Dreamliner', 240, 'Boeing');
+
+INSERT INTO Airplane values /*(planeID, year, type, airlineCode)*/
+('01', '1997', 'F-22 Raptor', 'AC'),
+('02', '1990', 'Su-34 Fullback', 'AF'),
+('03', '1972', 'A-10 Warthog', 'CA'),
+('04', '1966', 'AC-130 Gunship', 'AC'),
+('05', '2009', '787 Dreamliner', 'AC');
+
+INSERT INTO Airport values /*(airportCode, name, city, province)*/
+('ABC', 'airport_one', 'city_one', 'province_one'),
+('XYZ', 'airport_two', 'city_two', 'province_two'),
+('YVR', 'Vancouver International Airport', 'Vancouver', 'British Columbia'),
+('YYZ', 'Pearson Internation Airport', 'Toronto', 'Ontario');
+
+INSERT INTO Flight values /*(flightNumber, airlineCode, 3 digits, planeID)*/
+('AC123', 'AC', '123', '01'),
+('AF069', 'AF', '069', '02');
+
+INSERT INTO Flight_day values /*(flightNumber, flightDay)*/
+('AC123', 'Monday'),
+('AC123', 'Thursday'),
+('AF069', 'Friday');
+
+INSERT INTO Arrives values /*(flightNumber, airportCode, schedule, actual)*/
+('AC123', 'YYZ', 0630, 0630),
+('AF069', 'ABC', 2100, 2130);
+
+INSERT INTO Departs values /*(flightNumber, airportCode, schedule, actual)*/
+('AC123', 'YVR', 0030, 0030),
+('AF069', 'XYZ', 1600, 1630);
+
+INSERT INTO Supports values /*(airportCode, type)*/
+('ABC', 'F-22 Raptor'),
+('ABC', 'Su-34 Fullback'),
+('ABC', 'A-10 Warthog'),
+('ABC', 'AC-130 Gunship'),
+('ABC', '787 Dreamliner'),
+('XYZ', 'F-22 Raptor'),
+('XYZ', 'Su-34 Fullback'),
+('XYZ', 'A-10 Warthog'),
+('XYZ', 'AC-130 Gunship'),
+('XYZ', '787 Dreamliner'),
+('YVR', 'F-22 Raptor'),
+('YVR', 'Su-34 Fullback'),
+('YVR', 'A-10 Warthog'),
+('YVR', 'AC-130 Gunship'),
+('YVR', '787 Dreamliner'),
+('YYZ', 'F-22 Raptor'),
+('YYZ', 'Su-34 Fullback'),
+('YYZ', 'A-10 Warthog'),
+('YYZ', 'AC-130 Gunship'),
+('YYZ', '787 Dreamliner');
+
+
+
+
